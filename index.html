@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1500px;
+            margin: 0 auto;
+            padding: 300px;
+            background-image: url(images\ \(1\).jpg);
+            background-repeat: no-repeat;
+            background-size: cover;
+        background-attachment: fixed;
+        }
+        h1 {
+            text-align: center;
+            font-size: 55px;
+        }
+        #task-form {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        #task-input {
+            flex-grow: 1;
+            padding: 10px;
+            font-size: 26px;
+        }
+        button {
+            padding: 5px 10px;
+            font-size: 26px;
+            background-color: #070040;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background-color: #f9f9f9;
+            margin-bottom: 5px;
+        }
+        .delete-btn {
+            background-color: #51110d;
+        }
+        .delete-btn:hover {
+            background-color: #d32f2f;
+        }
+    </style>
+</head>
+<body>
+    <h1>To-Do List</h1>
+    <form id="task-form">
+        <input type="text" id="task-input" placeholder="Enter a new task" required style="border-radius: 25px;">
+        <button type="submit">Add Task</button>
+    </form>
+    <ul id="task-list"></ul>
+
+    <script>
+        const taskForm = document.getElementById('task-form');
+        const taskInput = document.getElementById('task-input');
+        const taskList = document.getElementById('task-list');
+
+        let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+        function saveTasks() {
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+        }
+
+        function renderTasks() {
+            taskList.innerHTML = '';
+            tasks.forEach((task, index) => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    ${task}
+                    <button class="delete-btn" data-index="${index}">Delete</button>
+                `;
+                taskList.appendChild(li);
+            });
+        }
+
+        function addTask(event) {
+            event.preventDefault();
+            const newTask = taskInput.value.trim();
+            if (newTask) {
+                tasks.push(newTask);
+                saveTasks();
+                renderTasks();
+                taskInput.value = '';
+            }
+        }
+
+        function deleteTask(event) {
+            if (event.target.classList.contains('delete-btn')) {
+                const index = parseInt(event.target.getAttribute('data-index'));
+                tasks.splice(index, 1);
+                saveTasks();
+                renderTasks();
+            }
+        }
+
+        taskForm.addEventListener('submit', addTask);
+        taskList.addEventListener('click', deleteTask);
+
+        renderTasks();
+    </script>
+</body>
+</html>
